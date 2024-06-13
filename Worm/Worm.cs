@@ -18,6 +18,7 @@ namespace Worm
         private Texture2D face;
         private Texture2D body;
         private Texture2D food;
+        private int tileWidth = 40;
 
         public Worm()
         {
@@ -30,8 +31,8 @@ namespace Worm
         {
             // TODO: Add your initialization logic here
             _graphics.IsFullScreen = false;
-            _graphics.PreferredBackBufferWidth = 800;
-            _graphics.PreferredBackBufferHeight = 640;
+            _graphics.PreferredBackBufferWidth = 20 * tileWidth;
+            _graphics.PreferredBackBufferHeight = 16 * tileWidth;
 
             // if changing GraphicsDeviceManager properties outside 
             // your game constructor also call:
@@ -72,11 +73,11 @@ namespace Worm
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
 
-            _spriteBatch.Draw(background, new Vector2(0,0), Color.White);
-            _spriteBatch.Draw(head, new Vector2(400, 240), Color.White);
-            _spriteBatch.Draw(face, new Vector2(420, 260), Color.White);
-            _spriteBatch.Draw(body, new Vector2(320, 240), Color.White);
-            _spriteBatch.Draw(food, new Vector2(580, 260), Color.White);
+            _spriteBatch.Draw(background, new Vector2(0, 0), Color.White);
+            _spriteBatch.Draw(head, new Rectangle(pointFromTile(10, 6, tileWidth, tileWidth), new Point(tileWidth, tileWidth)), Color.White);
+            _spriteBatch.Draw(face, new Rectangle(pointFromTile(10, 6, tileWidth, tileWidth/2), new Point((int)tileWidth/2, (int)tileWidth /2)), Color.White);
+            _spriteBatch.Draw(body, new Rectangle(pointFromTile(9, 6, tileWidth, tileWidth), new Point(tileWidth, tileWidth)), Color.White);
+            _spriteBatch.Draw(food, new Rectangle(pointFromTile(12, 6, tileWidth, tileWidth/2), new Point((int)tileWidth/2, (int)tileWidth/2)), Color.White);
 
             _spriteBatch.End();
 
@@ -106,9 +107,9 @@ namespace Worm
 
             _spriteBatch.Begin();
             int[] max = { GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight };
-            for (int x = 0; x <= max[0]; x += 80)
+            for (int x = 0; x <= max[0]; x += tileWidth)
                 DrawLineBetween(_spriteBatch, new Vector2((float)x,0f), new Vector2((float)x, (float)max[1]), 1, Color.Black);
-            for (int y = 0; y <= max[1]; y += 80)
+            for (int y = 0; y <= max[1]; y += tileWidth)
                 DrawLineBetween(_spriteBatch, new Vector2(0f, (float)y), new Vector2((float)max[0], (float)y), 1, Color.Black);
             _spriteBatch.End();
 
@@ -153,5 +154,11 @@ namespace Worm
                 1.0f);
         }
 
+        private Point pointFromTile(int x, int y, int tileSize, int imgSize)
+        {
+            int diff = tileSize - imgSize;
+            int halfDiff = (int)(diff / 2);
+            return new Point((int)(x * tileSize) + halfDiff, (int)(y * tileSize) + halfDiff);
+        }
     }
 }
