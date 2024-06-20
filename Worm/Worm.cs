@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Worm
@@ -19,6 +20,9 @@ namespace Worm
         private Texture2D body;
         private Texture2D food;
         private int tileWidth = 40;
+        private Point head_pos;
+        private int head_px_x = 0;
+        private int head_px_y = 0;
 
         public Worm()
         {
@@ -53,6 +57,8 @@ namespace Worm
             body = Content.Load<Texture2D>("body");
             food = Content.Load<Texture2D>("food");
 
+            head_pos = pointFromTile(10, 6, tileWidth, tileWidth);
+            
 
         }
 
@@ -61,7 +67,20 @@ namespace Worm
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float deltaTime = (float)gameTime.ElapsedGameTime.Ticks / TimeSpan.TicksPerSecond;
+            Debug.WriteLine("delta = " + delta + "    deltaTime = " + deltaTime);
+            
+            int diff = (int)(40 * 3 * delta);
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                head_pos.X -= diff;
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                head_pos.X += diff;
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                head_pos.Y -= diff;
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                head_pos.Y += diff;
+
 
             base.Update(gameTime);
         }
@@ -71,10 +90,12 @@ namespace Worm
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+
+
             _spriteBatch.Begin();
 
             _spriteBatch.Draw(background, new Vector2(0, 0), Color.White);
-            _spriteBatch.Draw(head, new Rectangle(pointFromTile(10, 6, tileWidth, tileWidth), new Point(tileWidth, tileWidth)), Color.White);
+            _spriteBatch.Draw(head, new Rectangle(head_pos, new Point(tileWidth, tileWidth)), Color.White);
             _spriteBatch.Draw(face, new Rectangle(pointFromTile(10, 6, tileWidth, tileWidth/2), new Point((int)tileWidth/2, (int)tileWidth /2)), Color.White);
             _spriteBatch.Draw(body, new Rectangle(pointFromTile(9, 6, tileWidth, tileWidth), new Point(tileWidth, tileWidth)), Color.White);
             _spriteBatch.Draw(food, new Rectangle(pointFromTile(12, 6, tileWidth, tileWidth/2), new Point((int)tileWidth/2, (int)tileWidth/2)), Color.White);
